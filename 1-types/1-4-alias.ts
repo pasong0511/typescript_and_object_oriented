@@ -28,4 +28,7 @@
 
     type JSON = "json"; //"json"이라는 sting 지정
     const json: JSON = "json"; //JSON 타입은 "json" 스트링만 나올 수 있다.
+
+    type Boal = true;
+    //const isCat: Boal = false;        //에러
 }
