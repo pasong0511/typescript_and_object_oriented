@@ -34,4 +34,46 @@
             console.log(`😥 ${state.reason}`);
         }
     }
+
+    //추가
+    //공통으로 type 프로퍼티를 갖고있다
+    type Type1 = {
+        type: "type1";
+        data1: string;
+    };
+
+    type Type2 = {
+        type: "type2";
+        data2: string;
+    };
+
+    type Type3 = {
+        type: "type3";
+        data3: string;
+    };
+
+    //MyType의 타입은  Type1 | Type2 | Type3 를 갖는다.
+    type MyType = Type1 | Type2 | Type3;
+
+    function consumeType(type: MyType) {
+        //공통 프로퍼티 type.type으로 구분 가능
+        switch (type.type) {
+            case "type1":
+                console.log(type.data1);
+                break;
+
+            case "type2":
+                console.log(type.data2);
+                break;
+
+            case "type3":
+                console.log(type.data3);
+                break;
+            default:
+                throw new Error("Unreceable");
+        }
+    }
+
+    //타입은 type1 데이터는 string 타입의 hi~~
+    consumeType({ type: "type1", data1: "hi~~" });
 }
