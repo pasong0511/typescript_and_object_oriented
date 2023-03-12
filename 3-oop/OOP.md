@@ -193,3 +193,96 @@ class CoffeeMaker {
 const maker2 = CoffeeMaker.makeMachine(2);
 ```
 
+
+
+
+
+---
+
+### getter, setter
+
+fullName이 설정된 뒤로 firstName, lastName이 변경되어도 fullName 가 계산되지않음
+
+this.fullName = `${this.firstName} ${this.lastName}`;가 처음 객체 생성될 때만 실행되어, user.firstName = "게이츠"; 새로 할당 하더라도 반영되지않는다.
+
+```typescript
+class User {
+    firstName: string;
+    lastName: string;
+    //getter를 이용하자 -> 접근할 떄는 멤버 변수를 접근하는 것 처럼 접근한다.(user.fullName)
+    fullName: string;
+    constructor(firstName: string, lastName: string) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.fullName = `${this.firstName} ${this.lastName}`;
+    }
+}
+
+const user = new User("스티브", "잡스");
+console.log(user.fullName);
+user.firstName = "게이츠";
+console.log(user.fullName); 
+
+//스티브 잡스
+//스티브 잡스
+```
+
+
+
+getter 이용해서 fullName 정의 시 fullName 접근 할 때 마다, 데이터 새로 만들고 계산
+
+getter 이용해서 만든 함수는 함수이지만, 접근 할 때는 멤버 변수에 접근하 듯 사용
+
+```typescript
+class User {
+    firstName: string;
+    lastName: string;
+    //getter를 이용하자 -> 접근할 떄는 멤버 변수를 접근하는 것 처럼 접근한다.(user.fullName)
+    get fullName(): string {
+        return `${this.firstName} ${this.lastName}`;
+    }
+    constructor(firstName: string, lastName: string) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+}
+
+const user = new User("스티브", "잡스");
+console.log(user.fullName);
+user.firstName = "게이츠";
+console.log(user.fullName); //스티브 게이츠로 나오지않고, 스티브 잡스로 나옴
+```
+
+
+
+getter와 setter는 멤버 변수처럼 접근이 가능하지만, 어떠한 계산을 해야할 때 유용하게 사용 가능
+
+get에서 private한 internalAge에 접근해서 반환 가능
+
+set에서 유효성 체크 후 private한 internalAge에 값 할당 가능
+
+```typescript
+class User {
+    //getter를 이용하자 -> 접근할 떄는 멤버 변수를 접근하는 것 처럼 접근한다.(user.fullName)
+    get fullName(): string {
+        return `${this.firstName} ${this.lastName}`;
+    }
+
+    private internalAge = 4;
+    get age(): number {
+        return this.internalAge;
+    }
+    set age(num: number) {
+        if (num < 0) {
+            throw new Error("0 보다 작은 값은 넣을 수 없음");
+        }
+        this.internalAge = num;
+    }
+    constructor(private firstName: string, private lastName: string) {}
+}
+
+const user = new User("스티브", "잡스");
+user.age = 6;
+//user.age = -122;      //0보다 작은 수 넣어서 set의 조건문에서 걸려서 에러남
+```
+

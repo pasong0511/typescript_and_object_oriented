@@ -15,12 +15,11 @@
         private coffeeBeans: number = 0;
 
         //커피 기계를 만들면서, 커피 콩을 바로 넣으려면 constructor에 정의한다.
-        protected constructor(coffeeBeans: number) {
+        constructor(coffeeBeans: number) {
             this.coffeeBeans = coffeeBeans;
         }
 
         //constructor를 거치지 않고, 바로 클래스 함수를 만든다.
-        //static makeMachine(coffeeBeans: number): CoffeeMaker {
         makeMachine(coffeeBeans: number): CoffeeMaker {
             return new CoffeeMaker(coffeeBeans); //여기서 new로 만들어서 내보냄
         }
@@ -48,8 +47,28 @@
     } //CoffeeMaker 클래스 끝
 
     const maker = new CoffeeMaker(32);
-    //maker.coffeeEeans = 1;        //-> coffeeBeans이 private로 접근 불가능
     maker.fillCoffeBeans(20);
 
-    //const maker2 = CoffeeMaker.makeMachine(2);
+    class User {
+        //getter를 이용하자 -> 접근할 떄는 멤버 변수를 접근하는 것 처럼 접근한다.(user.fullName)
+        get fullName(): string {
+            return `${this.firstName} ${this.lastName}`;
+        }
+
+        private internalAge = 4;
+        get age(): number {
+            return this.internalAge;
+        }
+        set age(num: number) {
+            if (num < 0) {
+                throw new Error("0 보다 작은 값은 넣을 수 없음");
+            }
+            this.internalAge = num;
+        }
+        constructor(private firstName: string, private lastName: string) {}
+    }
+
+    const user = new User("스티브", "잡스");
+    user.age = 6;
+    //user.age = -122;      //0보다 작은 수 넣어서 set의 조건문에서 걸려서 에러남
 }
