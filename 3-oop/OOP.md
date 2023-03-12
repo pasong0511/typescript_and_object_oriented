@@ -6,7 +6,7 @@ OOP
 
 
 
-### 1. 절차지향적으로 커피 기계 만들기
+### 1. 절차지향적으로 커피 기계 만들기 c
 
 ```typescript
 type CoffeeCup = {
