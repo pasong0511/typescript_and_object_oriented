@@ -286,3 +286,154 @@ user.age = 6;
 //user.age = -122;      //0보다 작은 수 넣어서 set의 조건문에서 걸려서 에러남
 ```
 
+
+
+### Abstraction
+
+#### interface 없이 추상화 하기
+
+interface를 간단하고 심플하게 만듦으로서 사용하는 사람이 간편하게 사용할 수 있게 도와준다.
+
+grindBeans(). preheat(), xtract() 함수를 private()로 사용하므로써 
+
+외부에서 접근 할 필요가 없는 함수로 은닉해버리면,
+
+외부에서 접근할 수 있는 함수는 makeCoffee(), fillCoffeBeans() 함수만 남게 된다.
+
+이렇게 되면  CoffeeMaker에서 생성한 객체에서 접근할 수 있는 함수가 명확하다.
+
+```typescript
+type CoffeeCup = {
+    shots: number;
+    hasMilk: boolean;
+};
+
+class CoffeeMaker {
+    private static BEAMS_GRAMM_PER_SHOT: number = 7;
+    private coffeeBeans: number = 0;
+
+    constructor(coffeeBeans: number) {
+        this.coffeeBeans = coffeeBeans;
+    }
+
+    static makeMachine(coffeeBeans: number): CoffeeMaker {
+        return new CoffeeMaker(coffeeBeans); //여기서 new로 만들어서 내보냄
+    }
+
+    fillCoffeBeans(beans: number) {
+        if (beans < 0) {
+            throw new Error("커피 콩은 0 보다 큰거만 들어와야해");
+        }
+        this.coffeeBeans += beans;
+    }
+
+    private grindBeans(shots: number) {
+        console.log(`${shots}샷을 위한 커피콩 갈기`);
+        if (this.coffeeBeans < shots * CoffeeMaker.BEAMS_GRAMM_PER_SHOT) {
+            throw new Error("커피콩 없음");
+        }
+        this.coffeeBeans -= shots * CoffeeMaker.BEAMS_GRAMM_PER_SHOT;
+    }
+
+    private preheat() {
+        console.log("따듯하게 데우는 중");
+    }
+
+    private extract(shots: number) {
+        console.log(`${shots}샷 커피 내리는 중`);
+
+        return {
+            shots,
+            hasMilk: false,
+        };
+    }
+
+    makeCoffee(shots: number): CoffeeCup {
+        this.grindBeans(shots);
+        this.preheat();
+        return this.extract(shots);
+    }
+} //CoffeeMaker 클래스 끝
+
+const maker = new CoffeeMaker(32);
+maker.fillCoffeBeans(20);
+```
+
+
+
+#### interface로 추상화하기
+
+이런 행동, 이런 규약을 갖고 있다라고 정의하는 계약서 같은 기능
+
+interface CoffeeMaker를 통해서 CoffeeMachine 클래스는 makeCoffee() 함수를 무조건 정의해야한다.
+
+```typescript
+type CoffeeCup = {
+    shots: number;
+    hasMilk: boolean;
+};
+
+//인터페이스 정의
+//makeCoffee() 함수 구현은 필수이다.
+interface CoffeeMaker {
+    makeCoffee(shots: number): CoffeeCup;
+}
+
+//CoffeeMachine클래스는 CoffeeMaker 인터페이스를 구현한다.
+class CoffeeMachine implements CoffeeMaker {
+    private static BEAMS_GRAMM_PER_SHOT: number = 7;
+    private coffeeBeans: number = 0;
+
+    constructor(coffeeBeans: number) {
+        this.coffeeBeans = coffeeBeans;
+    }
+
+    static makeMachine(coffeeBeans: number): CoffeeMachine {
+        return new CoffeeMachine(coffeeBeans); //여기서 new로 만들어서 내보냄
+    }
+
+    fillCoffeBeans(beans: number) {
+        if (beans < 0) {
+            throw new Error("커피 콩은 0 보다 큰거만 들어와야해");
+        }
+        this.coffeeBeans += beans;
+    }
+
+    private grindBeans(shots: number) {
+        console.log(`${shots}샷을 위한 커피콩 갈기`);
+        if (this.coffeeBeans < shots * CoffeeMachine.BEAMS_GRAMM_PER_SHOT) {
+            throw new Error("커피콩 없음");
+        }
+        this.coffeeBeans -= shots * CoffeeMachine.BEAMS_GRAMM_PER_SHOT;
+    }
+
+    private preheat() {
+        console.log("따듯하게 데우는 중");
+    }
+
+    private extract(shots: number) {
+        console.log(`${shots}샷 커피 내리는 중`);
+
+        return {
+            shots,
+            hasMilk: false,
+        };
+    }
+
+    makeCoffee(shots: number): CoffeeCup {
+        this.grindBeans(shots);
+        this.preheat();
+        return this.extract(shots);
+    }
+} //CoffeeMaker 클래스 끝
+
+const maker = CoffeeMachine.makeMachine(32);
+maker.fillCoffeBeans(20);
+maker.makeCoffee(2);
+
+//CoffeeMaker 인터페이스를 정의한 CoffeeMachine객체
+const maker2: CoffeeMaker = CoffeeMachine.makeMachine(32);
+//maker2.fillCoffeBeans(20); 	//fillCoffeBeans()는 CoffeeMaker 인터페이스에 없는 함수로 없어서 에러
+maker2.makeCoffee(2);
+```
+
